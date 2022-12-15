@@ -1,5 +1,5 @@
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
+import java.util.Date;
 import java.util.Properties;
 
 public class Main {
@@ -14,6 +14,40 @@ public class Main {
         Connection db = DriverManager.getConnection(url, props);
         System.out.println("Connected");
 
+        Statement stmt;
+        int time1, time2;
+
+        //ex1
+        time1 = (int) new Date().getTime();
+        stmt = db.createStatement();
+        String sqlDelIfEx = "DROP TABLE IF EXISTS professor, course;";
+        stmt.executeUpdate(sqlDelIfEx);
+        time2 = (int) new Date().getTime();
+        System.out.println("Step 1 needs " + (time2 - time1) + " ns");
+        stmt.close();
+
+        //ex2
+        time1 = (int) new Date().getTime();
+        stmt = db.createStatement();
+        String sqlCreTab = "CREATE TABLE student " +
+                "(id INTEGER not NULL, " +
+                "name VARCHAR(50), " +
+                "address VARCHAR(50), " +
+                "birthplace INTEGER not NULL, " +
+                "department FLOAT not NULL," +
+                "PRIMARY KEY (id));" +
+                "CREATE TABLE course " +
+                "(cid INTEGER not NULL, " +
+                "cname VARCHAR(50), " +
+                "credits VARCHAR(30), " +
+                "teacher INTEGER not NULL, " +
+                "PRIMARY KEY (cid))";
+        stmt.executeUpdate(sqlCreTab);
+        time2 = (int) new Date().getTime();
+        System.out.println("Step 1 needs " + (time2 - time1) + " ns");
+        stmt.close();
+
+        //ex3
 
         /*Statement stmt = db.createStatement();
 
@@ -75,8 +109,6 @@ public class Main {
             System.out.println("Surname: " + rs.getString("surname"));
             System.out.println("Birthplace: " + rs.getString(4) + '\n');
         }*/
-
-
 
         db.close();
     }
