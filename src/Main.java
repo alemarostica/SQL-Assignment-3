@@ -69,15 +69,15 @@ public class Main {
         stmt = db.createStatement();
         String sqlCreTab = "CREATE TABLE professor " +
                 "(id INTEGER not NULL, " +
-                "name VARCHAR(50), " +
-                "address VARCHAR(50), " +
+                "name VARCHAR(50) not NULL, " +
+                "address VARCHAR(50) not NULL, " +
                 "age INTEGER not NULL, " +
                 "department FLOAT not NULL," +
                 "PRIMARY KEY (id));" +
                 "CREATE TABLE course " +
-                "(cid VARCHAR(25), " +
-                "cname VARCHAR(50), " +
-                "credits VARCHAR(30), " +
+                "(cid VARCHAR(25) not NULL, " +
+                "cname VARCHAR(50) not NULL, " +
+                "credits VARCHAR(30) not NULL, " +
                 "teacher INTEGER not NULL, " +
                 "PRIMARY KEY (cid), " +
                 "FOREIGN KEY (teacher) REFERENCES professor(id));";
@@ -93,7 +93,7 @@ public class Main {
         pst = db.prepareStatement(query1);
 
         ArrayList<Professor> list = new ArrayList<Professor>();
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 1000000; i++){
             list.add(new Professor());
         }
 
@@ -103,13 +103,13 @@ public class Main {
             pst.setString(2, prof.name);
             pst.setString(3, prof.address);
             pst.setObject(4, prof.age);
-            if(count != 999) pst.setObject(5, prof.department);
+            if(count != 999999) pst.setObject(5, prof.department);
             else pst.setObject(5, 1940);
 
             pst.addBatch();
             count++;
 
-            if(count % 100 == 0 || count == list.size()){
+            if(count % 10000 == 0 || count == list.size()){
                 pst.executeBatch();
             }
         }
@@ -125,7 +125,7 @@ public class Main {
         pst = db.prepareStatement(query2);
 
         ArrayList<Course> clist = new ArrayList<Course>();
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 1000000; i++){
             clist.add(new Course());
         }
 
@@ -139,7 +139,7 @@ public class Main {
             pst.addBatch();
             count++;
 
-            if(count % 100 == 0 || count == clist.size()){
+            if(count % 10000 == 0 || count == clist.size()){
                 pst.executeBatch();
             }
         }
@@ -193,6 +193,15 @@ public class Main {
         stmt.close();
 
         //ex8
+        time1 = (int) new Date().getTime();
+        stmt = db.createStatement();
+        String createIndex = "CREATE INDEX department_index" +
+                "ON professor(department);";
+        stmt.executeUpdate(createIndex);
+
+        time2 = (int) new Date().getTime();
+        System.out.println("Step 8 needs " + (time2 - time1) + " ns");
+        stmt.close();
 
         //ex9
         time1 = (int) new Date().getTime();
